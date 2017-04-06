@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang = "en">
+
+  <head>
+    <meta charset = "UTF-8">
+    <title>Trump's Wall</title>
+    <link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen" />
+  </head>
+
+  <body>
+    
+    <!-- Map Slider -->
+    <div id = "map_slider" class="flexslider">
+      <ul class="slides">
+      </ul>
+    </div>
+    <!-- end Map Slider -->
+
+    <!-- Satellite Slider -->
+    <div id = "satellite_slider" class="flexslider">
+      <ul class="slides">
+      </ul>
+    </div>
+    <!-- End Satellite Slider -->
+
+    <!-- Street view Slider -->
+    <div id = "street_slider" class="flexslider">
+      <ul class="slides">
+      </ul>
+    </div>
+    <!-- End Street View Slider -->
+
+
+    <!-- jQuery -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.min.js">\x3C/script>')</script>
+
+    <!-- FlexSlider -->
+    <script defer src="js/jquery.flexslider.js"></script>
+
+    <script type="text/javascript">
+      $.getJSON("data.json", function (data) {
+        var mapImages = [];
+        var satelliteImages = [];
+        var streetImages = [];
+
+        //loop through image types and save each to their own array
+        $.each(data, function(k, v) {  
+          if(k == "map") {
+            mapImages = v;
+          } else if (k == "satellite") {
+            satelliteImages = v;
+          } else {
+            streetImages = v;
+          }
+        })
+
+        //Get uls for each image type
+        var mapUL = document.getElementById("map_slider");
+        var satelliteUL = document.getElementById("satellite_slider");
+        var streetUL = document.getElementById("street_slider");
+
+        var ULs = [mapUL, satelliteUL, streetUL];
+        var images = [mapImages, satelliteImages, streetImages];
+
+        //add images to their respectives lists
+        for(i = 0; i < ULs.length; i++) {
+          for (j = 0; j < images[i].length; j++) {
+            imgName = images[i][j].name;
+            var li = "<li><img src=" + imgName + "/></li>\n";
+            ULs[i].innerHTML += li;
+          }
+        }
+      });
+
+
+      $(function(){
+        SyntaxHighlighter.all();
+      });
+
+      $(window).load(function(){
+
+        /** 
+        * Create the flexsliders. An array of jquery items with flexslider data.
+        */
+        var all_slides = $('.flexslider').flexslider({
+          animation: "slide",
+          animationLoop: false,
+          slideshowSpeed: 5000,
+          slideshow: true,
+          itemWidth: 210,
+          itemMargin: 5,
+          before: function(slider) {
+            update_all(slider.animatingTo);
+          }
+        });
+
+
+        /** 
+        * Method that updates all slides 
+        */
+        function update_all(slide_number) {
+          for (i = 0; i < all_slides.length; i++) {
+            //run animation method on each slide
+            $(all_slides[i]).data('flexslider').flexAnimate(slide_number);
+          }
+        }
+      });
+
+    </script>
+  </body>
+
+</html>
